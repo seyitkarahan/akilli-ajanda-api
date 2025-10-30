@@ -5,28 +5,28 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "notifications")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Notification {
+@Entity
+@Table(name = "user_settings")
+public class UserSettings {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDateTime notifyAt;
+    private String notificationPrefence;
 
-    private boolean isSent = false;
+    private String timezone;
 
-    @ManyToOne
-    @JoinColumn(name = "task_id", nullable = false)
-    private Task task;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-    @ManyToOne
+    private LocalDateTime updatedAt = LocalDateTime.now();
+
+    @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }

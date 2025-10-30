@@ -2,29 +2,34 @@ package com.seyitkarahan.akilli_ajanda_api.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "notifications")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Notification {
+@Entity
+@Table(name = "task_suggestions")
+public class TaskSuggestion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDateTime notifyAt;
+    private String suggestedTaskText;
 
-    private boolean isSent = false;
+    private String parsedTitle;
 
-    @ManyToOne
-    @JoinColumn(name = "task_id", nullable = false)
-    private Task task;
+    private String parsedCategory;
+
+    private LocalDateTime parsedStartTime;
+
+    private LocalDateTime parsedEndTime;
+
+    private boolean isAccepted = false;
+
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
