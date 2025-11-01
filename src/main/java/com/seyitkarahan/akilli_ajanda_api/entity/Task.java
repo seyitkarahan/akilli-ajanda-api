@@ -1,6 +1,7 @@
 package com.seyitkarahan.akilli_ajanda_api.entity;
 
 import com.seyitkarahan.akilli_ajanda_api.enums.ImportanceLevel;
+import com.seyitkarahan.akilli_ajanda_api.enums.TaskStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,7 +25,8 @@ public class Task {
     @Column(length = 1000)
     private String description;
 
-    private String status;          // PENDING, COMPLETED vb.
+    @Enumerated(EnumType.STRING)
+    private TaskStatus status;
 
     private LocalDateTime startTime;
 
