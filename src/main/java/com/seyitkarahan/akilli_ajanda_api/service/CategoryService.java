@@ -59,6 +59,10 @@ public class CategoryService {
         User user = getCurrentUser();
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Kategori bulunamadı!"));
+
+        if (!category.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Bu todo'yu silme iznin yok!");
+        }
         categoryRepository.delete(category);
     }
 
