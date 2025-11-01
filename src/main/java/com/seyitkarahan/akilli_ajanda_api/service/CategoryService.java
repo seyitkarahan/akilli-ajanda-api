@@ -70,6 +70,7 @@ public class CategoryService {
         return CategoryResponse.builder()
                 .id(category.getId())
                 .name(category.getName())
+                .userId(category.getUser().getId())
                 .build();
     }
 
