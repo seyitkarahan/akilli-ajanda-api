@@ -4,6 +4,9 @@ import com.seyitkarahan.akilli_ajanda_api.dto.request.CategoryRequest;
 import com.seyitkarahan.akilli_ajanda_api.dto.response.CategoryResponse;
 import com.seyitkarahan.akilli_ajanda_api.entity.Category;
 import com.seyitkarahan.akilli_ajanda_api.entity.User;
+import com.seyitkarahan.akilli_ajanda_api.exception.CategoryNotFoundException;
+import com.seyitkarahan.akilli_ajanda_api.exception.UnauthorizedActionException;
+import com.seyitkarahan.akilli_ajanda_api.exception.UserNotFoundException;
 import com.seyitkarahan.akilli_ajanda_api.repository.CategoryRepository;
 import com.seyitkarahan.akilli_ajanda_api.repository.UserRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -44,10 +47,10 @@ public class CategoryService {
     public CategoryResponse updateCategory(Long id, CategoryRequest request) {
         User user = getCurrentUser();
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Kategori bulunamadı!"));
+                .orElseThrow(() -> new CategoryNotFoundException("Kategori bulunamadı!"));
 
         if (!category.getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("Bu kategoriyi güncelleme iznin yok!");
+            throw new UnauthorizedActionException("Bu kategoriyi güncelleme iznin yok!");
         }
 
         category.setName(request.getName());
@@ -58,10 +61,10 @@ public class CategoryService {
     public void deleteCategory(Long id) {
         User user = getCurrentUser();
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Kategori bulunamadı!"));
+                .orElseThrow(() -> new CategoryNotFoundException("Kategori bulunamadı!"));
 
         if (!category.getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("Bu todo'yu silme iznin yok!");
+            throw new UnauthorizedActionException("Bu todo'yu silme iznin yok!");
         }
         categoryRepository.delete(category);
     }
@@ -77,6 +80,6 @@ public class CategoryService {
     private User getCurrentUser() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı: " + email));
+                .orElseThrow(() -> new UserNotFoundException("Kullanıcı bulunamadı: " + email));
     }
 }

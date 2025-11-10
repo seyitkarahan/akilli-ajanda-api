@@ -1,6 +1,7 @@
 package com.seyitkarahan.akilli_ajanda_api.service;
 
 import com.seyitkarahan.akilli_ajanda_api.entity.RecurringTaskRule;
+import com.seyitkarahan.akilli_ajanda_api.exception.*;
 import com.seyitkarahan.akilli_ajanda_api.repository.RecurringTaskRuleRepository;
 import org.springframework.stereotype.Service;
 
@@ -44,9 +45,9 @@ public class TaskService {
     public TaskResponse getTaskById(Long id) {
         User user = getCurrentUser();
         Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+                .orElseThrow(() -> new TaskNotFoundException("Task not found"));
         if (!task.getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("You are not allowed to access this task");
+            throw new UnauthorizedTaskAccessException("You are not allowed to access this task");
         }
         return mapToResponse(task);
     }
@@ -66,10 +67,10 @@ public class TaskService {
 
         if (request.getCategoryId() != null) {
             Category category = categoryRepository.findById(request.getCategoryId())
-                    .orElseThrow(() -> new RuntimeException("Category not found"));
+                    .orElseThrow(() -> new CategoryNotFoundException("Category not found"));
 
             if (category.getUser() != null && !category.getUser().getId().equals(user.getId())) {
-                throw new RuntimeException("You cannot assign a task to this category");
+                throw new UnauthorizedTaskAccessException("You cannot assign a task to this category");
             }
 
             task.setCategory(category);
@@ -77,7 +78,7 @@ public class TaskService {
 
         if (request.getRecurringRuleId() != null) {
             RecurringTaskRule rule = recurringTaskRuleRepository.findById(request.getRecurringRuleId())
-                    .orElseThrow(() -> new RuntimeException("Recurring task rule not found"));
+                    .orElseThrow(() -> new RecurringTaskRuleNotFoundException("Recurring task rule not found"));
             task.setRecurringRule(rule);
         }
 
@@ -87,10 +88,10 @@ public class TaskService {
     public TaskResponse updateTask(Long id, TaskRequest request) {
         User user = getCurrentUser();
         Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+                .orElseThrow(() -> new TaskNotFoundException("Task not found"));
 
         if (!task.getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("You are not allowed to update this task");
+            throw new UnauthorizedTaskAccessException("You are not allowed to update this task");
         }
 
         task.setTitle(request.getTitle());
@@ -104,7 +105,7 @@ public class TaskService {
             Category category = categoryRepository.findById(request.getCategoryId())
                     .orElseThrow(() -> new RuntimeException("Category not found"));
             if (category.getUser() != null && !category.getUser().getId().equals(user.getId())) {
-                throw new RuntimeException("You cannot assign a task to this category");
+                throw new CategoryNotFoundException("You cannot assign a task to this category");
             }
             task.setCategory(category);
         } else {
@@ -113,7 +114,7 @@ public class TaskService {
 
         if (request.getRecurringRuleId() != null) {
             RecurringTaskRule rule = recurringTaskRuleRepository.findById(request.getRecurringRuleId())
-                    .orElseThrow(() -> new RuntimeException("Recurring task rule not found"));
+                    .orElseThrow(() -> new RecurringTaskRuleNotFoundException("Recurring task rule not found"));
             task.setRecurringRule(rule);
         } else {
             task.setRecurringRule(null);
@@ -125,10 +126,10 @@ public class TaskService {
     public void deleteTask(Long id) {
         User user = getCurrentUser();
         Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+                .orElseThrow(() -> new TaskNotFoundException("Task not found"));
 
         if (!task.getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("You are not allowed to delete this task");
+            throw new UnauthorizedTaskAccessException("You are not allowed to delete this task");
         }
 
         taskRepository.delete(task);
@@ -137,7 +138,7 @@ public class TaskService {
     private User getCurrentUser() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Authenticated user not found"));
+                .orElseThrow(() -> new UserNotFoundException("Authenticated user not found"));
     }
 
     private TaskResponse mapToResponse(Task task) {

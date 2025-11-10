@@ -5,6 +5,10 @@ import com.seyitkarahan.akilli_ajanda_api.dto.response.NotificationResponse;
 import com.seyitkarahan.akilli_ajanda_api.entity.Notification;
 import com.seyitkarahan.akilli_ajanda_api.entity.Task;
 import com.seyitkarahan.akilli_ajanda_api.entity.User;
+import com.seyitkarahan.akilli_ajanda_api.exception.NotificationNotFoundException;
+import com.seyitkarahan.akilli_ajanda_api.exception.TaskNotFoundException;
+import com.seyitkarahan.akilli_ajanda_api.exception.UnauthorizedActionException;
+import com.seyitkarahan.akilli_ajanda_api.exception.UserNotFoundException;
 import com.seyitkarahan.akilli_ajanda_api.repository.NotificationRepository;
 import com.seyitkarahan.akilli_ajanda_api.repository.TaskRepository;
 import com.seyitkarahan.akilli_ajanda_api.repository.UserRepository;
@@ -40,9 +44,9 @@ public class NotificationService {
     public NotificationResponse getNotificationById(Long id) {
         User user = getCurrentUser();
         Notification notification = notificationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Notification not found"));
+                .orElseThrow(() -> new NotificationNotFoundException("Notification not found"));
         if (!notification.getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("You are not allowed to access this notification");
+            throw new UnauthorizedActionException("You are not allowed to access this notification");
         }
         return mapToResponse(notification);
     }
@@ -50,10 +54,10 @@ public class NotificationService {
     public NotificationResponse createNotification(NotificationRequest request) {
         User user = getCurrentUser();
         Task task = taskRepository.findById(request.getTaskId())
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+                .orElseThrow(() -> new TaskNotFoundException("Task not found"));
 
         if (!task.getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("You cannot create a notification for this task");
+            throw new UnauthorizedActionException("You cannot create a notification for this task");
         }
 
         Notification notification = Notification.builder()
@@ -69,18 +73,18 @@ public class NotificationService {
     public NotificationResponse updateNotification(Long id, NotificationRequest request) {
         User user = getCurrentUser();
         Notification notification = notificationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Notification not found"));
+                .orElseThrow(() -> new NotificationNotFoundException("Notification not found"));
 
         if (!notification.getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("You are not allowed to update this notification");
+            throw new UnauthorizedActionException("You are not allowed to update this notification");
         }
 
         notification.setNotifyAt(request.getNotifyAt());
         if (request.getTaskId() != null) {
             Task task = taskRepository.findById(request.getTaskId())
-                    .orElseThrow(() -> new RuntimeException("Task not found"));
+                    .orElseThrow(() -> new TaskNotFoundException("Task not found"));
             if (!task.getUser().getId().equals(user.getId())) {
-                throw new RuntimeException("You cannot assign this task");
+                throw new UnauthorizedActionException("You cannot assign this task");
             }
             notification.setTask(task);
         }
@@ -91,10 +95,10 @@ public class NotificationService {
     public void deleteNotification(Long id) {
         User user = getCurrentUser();
         Notification notification = notificationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Notification not found"));
+                .orElseThrow(() -> new NotificationNotFoundException("Notification not found"));
 
         if (!notification.getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("You are not allowed to delete this notification");
+            throw new UnauthorizedActionException("You are not allowed to delete this notification");
         }
 
         notificationRepository.delete(notification);
@@ -103,7 +107,7 @@ public class NotificationService {
     private User getCurrentUser() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Authenticated user not found"));
+                .orElseThrow(() -> new UserNotFoundException("Authenticated user not found"));
     }
 
     private NotificationResponse mapToResponse(Notification notification) {

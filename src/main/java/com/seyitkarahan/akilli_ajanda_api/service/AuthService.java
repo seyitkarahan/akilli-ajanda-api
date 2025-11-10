@@ -4,6 +4,8 @@ import com.seyitkarahan.akilli_ajanda_api.dto.request.AuthRequest;
 import com.seyitkarahan.akilli_ajanda_api.dto.request.LoginRequest;
 import com.seyitkarahan.akilli_ajanda_api.dto.response.AuthResponse;
 import com.seyitkarahan.akilli_ajanda_api.entity.User;
+import com.seyitkarahan.akilli_ajanda_api.exception.UserAlreadyExistsException;
+import com.seyitkarahan.akilli_ajanda_api.exception.UserNotFoundException;
 import com.seyitkarahan.akilli_ajanda_api.repository.UserRepository;
 import com.seyitkarahan.akilli_ajanda_api.security.JwtService;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,7 +35,7 @@ public class AuthService {
 
     public AuthResponse register(AuthRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Bu e-posta zaten kayıtlı!");
+            throw new UserAlreadyExistsException("Bu e-posta zaten kayıtlı!" + request.getEmail());
         }
 
         User user = User.builder()
@@ -58,7 +60,7 @@ public class AuthService {
         );
 
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
+                .orElseThrow(() -> new UserNotFoundException("Bu e-posta adresine sahip kullanıcı bulunamadı: " + request.getEmail()));
 
         String token = jwtService.generateToken(user.getEmail());
         return new AuthResponse(token);
