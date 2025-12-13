@@ -12,5 +12,6 @@ import java.time.LocalDateTime;
 public class NotificationRequest {
 
     private LocalDateTime notifyAt;
+    private boolean isSent;
     private Long taskId;
 }

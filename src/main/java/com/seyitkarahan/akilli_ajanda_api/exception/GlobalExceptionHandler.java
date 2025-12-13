@@ -58,6 +58,11 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT, "User Settings Already Exists");
     }
 
+    @ExceptionHandler()
+    public ResponseEntity<Map<String, Object>> handleEventNotFound(EventNotFoundException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND, "Event Not Found");
+    }
+
     // General Exception Handler
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGeneralException(Exception ex, HttpServletRequest request) throws Exception {
@@ -66,7 +71,6 @@ public class GlobalExceptionHandler {
         }
         return buildErrorResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error");
     }
-
 
     private ResponseEntity<Map<String, Object>> buildErrorResponse(String message, HttpStatus status, String error) {
         Map<String, Object> body = new HashMap<>();
