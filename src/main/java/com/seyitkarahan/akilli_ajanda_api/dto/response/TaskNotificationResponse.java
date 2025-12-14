@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class NotificationResponse {
+public class TaskNotificationResponse {
 
     private Long id;
     private LocalDateTime notifyAt;

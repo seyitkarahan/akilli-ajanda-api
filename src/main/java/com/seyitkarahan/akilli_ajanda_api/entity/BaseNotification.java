@@ -2,17 +2,17 @@ package com.seyitkarahan.akilli_ajanda_api.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "notifications")
+@MappedSuperclass
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class Notification {
+@SuperBuilder
+public class BaseNotification {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,10 +21,6 @@ public class Notification {
     private LocalDateTime notifyAt;
 
     private boolean isSent = false;
-
-    @ManyToOne
-    @JoinColumn(name = "task_id", nullable = false)
-    private Task task;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

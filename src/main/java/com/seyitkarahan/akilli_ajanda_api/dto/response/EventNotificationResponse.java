@@ -1,4 +1,4 @@
-package com.seyitkarahan.akilli_ajanda_api.dto.request;
+package com.seyitkarahan.akilli_ajanda_api.dto.response;
 
 import lombok.*;
 
@@ -9,9 +9,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class NotificationRequest {
+public class EventNotificationResponse {
 
+    private Long id;
     private LocalDateTime notifyAt;
     private boolean isSent;
-    private Long taskId;
+    private Long eventId;
 }
