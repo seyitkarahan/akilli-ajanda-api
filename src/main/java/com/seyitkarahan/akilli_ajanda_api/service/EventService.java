@@ -29,10 +29,18 @@ public class EventService {
         this.categoryRepository = categoryRepository;
     }
 
-    public List<EventResponse> getAllEvents() {
+    public List<EventResponse> getAllEvents(Long categoryId) {
         User user = getCurrentUser();
-        return eventRepository.findByUser(user)
-                .stream()
+        List<Event> events = eventRepository.findByUser(user);
+
+        if (categoryId != null) {
+            return events.stream()
+                    .filter(event -> event.getCategory() != null && event.getCategory().getId().equals(categoryId))
+                    .map(this::mapToResponse)
+                    .collect(Collectors.toList());
+        }
+
+        return events.stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }

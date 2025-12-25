@@ -34,10 +34,18 @@ public class TaskService {
         this.recurringTaskRuleRepository = recurringTaskRuleRepository;
     }
 
-    public List<TaskResponse> getAllTasks() {
+    public List<TaskResponse> getAllTasks(Long categoryId) {
         User user = getCurrentUser();
-        return taskRepository.findByUser(user)
-                .stream()
+        List<Task> tasks = taskRepository.findByUser(user);
+
+        if (categoryId != null) {
+            return tasks.stream()
+                    .filter(task -> task.getCategory() != null && task.getCategory().getId().equals(categoryId))
+                    .map(this::mapToResponse)
+                    .collect(Collectors.toList());
+        }
+
+        return tasks.stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }

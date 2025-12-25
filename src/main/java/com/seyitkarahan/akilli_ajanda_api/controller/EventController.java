@@ -19,8 +19,8 @@ public class EventController {
     }
 
     @GetMapping
-    public ResponseEntity<List<EventResponse>> getAllEvents() {
-        return ResponseEntity.ok(eventService.getAllEvents());
+    public ResponseEntity<List<EventResponse>> getAllEvents(@RequestParam(required = false) Long categoryId) {
+        return ResponseEntity.ok(eventService.getAllEvents(categoryId));
     }
 
     @GetMapping("/{id}")
