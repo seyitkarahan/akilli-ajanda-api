@@ -41,7 +41,15 @@ public class UserSettingsService {
 
         UserSettings settings = UserSettings.builder()
                 .user(user)
-                .notificationPrefence(request.getNotificationPrefence())
+                .theme(request.getTheme())
+                .language(request.getLanguage())
+                .startDayOfWeek(request.getStartDayOfWeek())
+                .dateFormat(request.getDateFormat())
+                .is24HourFormat(request.getIs24HourFormat())
+                .emailNotificationsEnabled(request.getEmailNotificationsEnabled())
+                .pushNotificationsEnabled(request.getPushNotificationsEnabled())
+                .defaultTaskReminderMinutes(request.getDefaultTaskReminderMinutes())
+                .defaultEventReminderMinutes(request.getDefaultEventReminderMinutes())
                 .timezone(request.getTimezone())
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
@@ -55,10 +63,18 @@ public class UserSettingsService {
         UserSettings settings = userSettingsRepository.findByUser(user)
                 .orElseThrow(() -> new UserNotFoundException("User settings not found"));
 
-        settings.setNotificationPrefence(request.getNotificationPrefence());
-        settings.setTimezone(request.getTimezone());
-        settings.setCreatedAt(java.time.LocalDateTime.now());
-        settings.setUpdatedAt(java.time.LocalDateTime.now());
+        if (request.getTheme() != null) settings.setTheme(request.getTheme());
+        if (request.getLanguage() != null) settings.setLanguage(request.getLanguage());
+        if (request.getStartDayOfWeek() != null) settings.setStartDayOfWeek(request.getStartDayOfWeek());
+        if (request.getDateFormat() != null) settings.setDateFormat(request.getDateFormat());
+        if (request.getIs24HourFormat() != null) settings.setIs24HourFormat(request.getIs24HourFormat());
+        if (request.getEmailNotificationsEnabled() != null) settings.setEmailNotificationsEnabled(request.getEmailNotificationsEnabled());
+        if (request.getPushNotificationsEnabled() != null) settings.setPushNotificationsEnabled(request.getPushNotificationsEnabled());
+        if (request.getDefaultTaskReminderMinutes() != null) settings.setDefaultTaskReminderMinutes(request.getDefaultTaskReminderMinutes());
+        if (request.getDefaultEventReminderMinutes() != null) settings.setDefaultEventReminderMinutes(request.getDefaultEventReminderMinutes());
+        if (request.getTimezone() != null) settings.setTimezone(request.getTimezone());
+        
+        settings.setUpdatedAt(LocalDateTime.now());
 
         return mapToResponse(userSettingsRepository.save(settings));
     }
@@ -79,7 +95,15 @@ public class UserSettingsService {
     private UserSettingsResponse mapToResponse(UserSettings settings) {
         return UserSettingsResponse.builder()
                 .id(settings.getId())
-                .notificationPrefence(settings.getNotificationPrefence())
+                .theme(settings.getTheme())
+                .language(settings.getLanguage())
+                .startDayOfWeek(settings.getStartDayOfWeek())
+                .dateFormat(settings.getDateFormat())
+                .is24HourFormat(settings.getIs24HourFormat())
+                .emailNotificationsEnabled(settings.getEmailNotificationsEnabled())
+                .pushNotificationsEnabled(settings.getPushNotificationsEnabled())
+                .defaultTaskReminderMinutes(settings.getDefaultTaskReminderMinutes())
+                .defaultEventReminderMinutes(settings.getDefaultEventReminderMinutes())
                 .timezone(settings.getTimezone())
                 .userId(settings.getUser().getId())
                 .build();
