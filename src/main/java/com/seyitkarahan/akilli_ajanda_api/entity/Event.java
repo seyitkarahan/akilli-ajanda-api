@@ -29,6 +29,10 @@ public class Event {
 
     private String location;
 
+    private Double latitude;
+
+    private Double longitude;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

@@ -16,5 +16,7 @@ public class EventRequest {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private String location;
+    private Double latitude;
+    private Double longitude;
     private Long categoryId;
 }

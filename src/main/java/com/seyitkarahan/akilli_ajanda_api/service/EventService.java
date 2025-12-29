@@ -66,6 +66,8 @@ public class EventService {
                 .startTime(request.getStartTime())
                 .endTime(request.getEndTime())
                 .location(request.getLocation())
+                .latitude(request.getLatitude())
+                .longitude(request.getLongitude())
                 .user(user)
                 .build();
 
@@ -97,6 +99,9 @@ public class EventService {
         event.setStartTime(request.getStartTime());
         event.setEndTime(request.getEndTime());
         event.setLocation(request.getLocation());
+        event.setLatitude(request.getLatitude());
+        event.setLongitude(request.getLongitude());
+
 
         if (request.getCategoryId() != null) {
             Category category = categoryRepository.findById(request.getCategoryId())
@@ -140,6 +145,8 @@ public class EventService {
                 .startTime(event.getStartTime())
                 .endTime(event.getEndTime())
                 .location(event.getLocation())
+                .latitude(event.getLatitude())
+                .longitude(event.getLongitude())
                 .userId(event.getUser().getId())
                 .categoryId(event.getCategory() != null ? event.getCategory().getId() : null)
                 .build();
