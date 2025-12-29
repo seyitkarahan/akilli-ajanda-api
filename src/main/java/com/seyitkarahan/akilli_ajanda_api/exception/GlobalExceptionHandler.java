@@ -3,6 +3,7 @@ package com.seyitkarahan.akilli_ajanda_api.exception;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -63,6 +64,11 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND, "Event Not Found");
     }
 
+    @ExceptionHandler
+    public ResponseEntity<Map<String, Object>> handleInvalidCategory(InvalidCategoryException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST, "Invalid Category");
+    }
+
     // General Exception Handler
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGeneralException(Exception ex, HttpServletRequest request) throws Exception {
@@ -70,6 +76,17 @@ public class GlobalExceptionHandler {
             throw ex;
         }
         return buildErrorResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error");
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<Map<String, Object>> handleBadCredentials(BadCredentialsException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of(
+                        "status", 401,
+                        "error", "Unauthorized",
+                        "message", ex.getMessage(),
+                        "timestamp", LocalDateTime.now()
+                ));
     }
 
     private ResponseEntity<Map<String, Object>> buildErrorResponse(String message, HttpStatus status, String error) {
