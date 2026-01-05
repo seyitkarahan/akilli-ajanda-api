@@ -82,6 +82,16 @@ public class EventNotificationService {
         }
 
         notification.setNotifyAt(request.getNotifyAt());
+
+        if (!notification.getEvent().getId().equals(request.getEventId())) {
+            Event event = eventRepository.findById(request.getEventId())
+                    .orElseThrow(() -> new EventNotFoundException("Event not found"));
+            notification.setEvent(event);
+        }
+
+        notification.setSent(false);
+
+        notification.setNotifyAt(request.getNotifyAt());
         notification.setSent(request.isSent());
 
         return mapToResponse(eventNotificationRepository.save(notification));

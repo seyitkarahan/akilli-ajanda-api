@@ -25,6 +25,8 @@ public class User {
 
     private String password;
 
+    private String deviceToken;
+
     private LocalDateTime createdAt = LocalDateTime.now();
 
     private LocalDateTime updatedAt = LocalDateTime.now();
